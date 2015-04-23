@@ -1,8 +1,9 @@
+from django.test import LiveServerTestCase
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -17,9 +18,9 @@ class NewVisitorTest(unittest.TestCase):
         self.assertIn(row_text, [row.text for row in rows])
 
     def test_can_start_list_and_retrieve_it_later(self):
-        # Elain has just heard about a cool new to-do webapp. 
+        # Elain has just heard about a cool new to-do webapp.
         # She goes to check its homepage
-        self.browser.get('http://localhost:8008')
+        self.browser.get(self.live_server_url)
 
         # She notices the page title and header mentionto-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -34,7 +35,7 @@ class NewVisitorTest(unittest.TestCase):
             'Enter a to-do item'
         )
 
-        # She types "Buy peacock feathers" into a text box (Elaine's hobby 
+        # She types "Buy peacock feathers" into a text box (Elaine's hobby
         # is tying fly-fishing lures)
         inputbox.send_keys('Buy peacock feathers')
 
@@ -58,15 +59,11 @@ class NewVisitorTest(unittest.TestCase):
         self.check_for_row_in_list_table('1: Buy peacock feathers')
         self.check_for_row_in_list_table('2: Use peacock to make a fly')
 
-        # Elaine wonders wether the site will remember her list. THe she sees 
-        # that the site has generated a unique URL for her -- there is some 
+        # Elaine wonders wether the site will remember her list. Then she sees
+        # that the site has generated a unique URL for her -- there is some
         # explanatory text text to that effect.
         self.fail('Finish the test!')
 
         # She visits that URL - her to-do list is still there.
 
         # Satisfied she goes to sleep
-
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
