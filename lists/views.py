@@ -2,6 +2,12 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
 from .models import Item, List
+from .tools import ParseYandexInternetometr
+
+
+def show_self_ip(request):
+    parser = ParseYandexInternetometr()
+    return HttpResponse(parser.ip)
 
 
 def home_page(request):
