@@ -34,9 +34,9 @@ def _update_settings(source_folder, site_name):
     sed(settings_path, "DEBUG = True", "DEBUG = False")
     sed(settings_path,
         'ALLOWED_HOSTS = .+$',
-        'ALLOWED_HOSTS = [%s]' % (site_name, )
+        'ALLOWED_HOSTS = ["%s"]' % (site_name, )
     )
-    secret_key_file = source_folder + '/superlists/sekret_key.py'
+    secret_key_file = source_folder + '/superlists/secret_key.py'
     if not exists(secret_key_file):
         chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
         key = ''.join(random.SystemRandom().choice(chars) for _ in range(50))
@@ -47,7 +47,7 @@ def _update_settings(source_folder, site_name):
 def _update_virtualenv(source_folder):
     virtualenv_folder = source_folder + '/../virtualenv'
     if not exists(virtualenv_folder + '/bin/pip'):
-        run("virtualenv --python=python3 %s" % (virtual_folder, ))
+        run("virtualenv --python=python3 %s" % (virtualenv_folder, ))
     run("%s/bin/pip install -r %s/requirements.txt" % (
         virtualenv_folder, source_folder
     ))
