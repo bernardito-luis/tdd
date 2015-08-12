@@ -91,7 +91,7 @@ class ListViewTest(TestCase):
         response = self.post_invalid_input()
         self.assertIsInstance(response.context['form'], ItemForm)
 
-    def test_for_invalid_input_passes_form_template(self):
+    def test_for_invalid_input_shows_error_message(self):
         response = self.post_invalid_input()
         self.assertContains(response, escape(EMPTY_ITEM_ERROR))
 
