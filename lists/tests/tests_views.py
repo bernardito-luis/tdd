@@ -54,7 +54,7 @@ class ListViewTest(TestCase):
         self.assertIsInstance(response.context['form'], ItemForm)
         self.assertContains(response, 'name="text"')
 
-    def test_displays_all_items(self):
+    def test_displays_only_items_for_that_list(self):
         correct_list = List.objects.create()
         Item.objects.create(text='itemey 1', list=correct_list)
         Item.objects.create(text='itemey 2', list=correct_list)
@@ -62,7 +62,7 @@ class ListViewTest(TestCase):
         Item.objects.create(text='other list item 1', list=other_list)
         Item.objects.create(text='other list item 2', list=other_list)
 
-        response = self.client.get('/lists/%d/' % (correct_list.id, ))
+        response = self.client.get('/lists/%d/' % (correct_list.id,))
 
         self.assertContains(response, 'itemey 1')
         self.assertContains(response, 'itemey 2')
@@ -97,7 +97,7 @@ class ListViewTest(TestCase):
         response = self.post_invalid_input()
         self.assertIsInstance(response.context['form'], ItemForm)
 
-    def test_for_invalid_input_shows_error_message(self):
+    def test_for_invalid_input_shows_error_on_page(self):
         response = self.post_invalid_input()
         self.assertContains(response, escape(EMPTY_ITEM_ERROR))
 
@@ -115,16 +115,6 @@ class ListViewTest(TestCase):
         self.assertEqual(Item.objects.all().count(), 1)
         expected_error = escape(DUPLICATE_ITEM_ERROR)
         
-    def test_displays_item_form(self):
-        list_ = List.objects.create()
-        response = self.client.get('/lists/%d/' % (list_.id, ))
-        self.assertIsInstance(response.context['form'], ExistingListItemForm)
-        self.assertContains(response, 'name="text"')
-
-    def test_for_invalid_input_passes_form_to_template(self):
-        response = self.post_invalid_input()
-        self.assertIsInstance(response.context['form'], ExistingListItemForm)
-
 
 class NewListTest(TestCase):
 
@@ -138,14 +128,14 @@ class NewListTest(TestCase):
         new_item = Item.objects.first()
         self.assertEqual(new_item.text, 'A new list item')
 
-    def test_redirects_after_POST(self):
+    def test_POST_redirects_to_list_view(self):
+        other_list = List.objects.create()
+        correct_list = List.objects.create()
         response = self.client.post(
-            '/lists/new',
-            data={'text': 'A new list item'}
+            '/lists/%d/' % (correct_list.id,),
+            data={'text': 'A new item for an existing list'}
         )
-        new_list = List.objects.first()
-
-        self.assertRedirects(response, '/lists/%d/' % (new_list.id, ))
+        self.assertRedirects(response, '/lists/%d/' % (correct_list.id,))
 
     def test_for_invalid_input_renders_home_template(self):
         response = self.client.post('/lists/new', data={'text': ''})
