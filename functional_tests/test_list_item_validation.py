@@ -3,7 +3,7 @@ from unittest import skip
 from .base import FunctionalTest
 
 
-class ItemValdidationTest(FunctionalTest):
+class ItemValidationTest(FunctionalTest):
 
     def get_error_element(self):
         return self.browser.find_element_by_css_selector('.has-error')
@@ -50,7 +50,6 @@ class ItemValdidationTest(FunctionalTest):
         error = self.get_error_element()
         self.assertEqual(error.text, "You've already got this in your list")
 
-    @skip
     def test_error_messages_are_cleared_on_input(self):
         # Elaine a new list in a way that causes a validation error:
         self.browser.get(self.server_url)

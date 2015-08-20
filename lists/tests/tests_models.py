@@ -53,6 +53,7 @@ class ItemModelTest(TestCase):
             [item1, item2, item3]
         )
 
+
 class ListModelTest(TestCase):
 
     def test_get_absolute_url(self):

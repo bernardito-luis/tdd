@@ -14,7 +14,6 @@ from lists.forms import (
 )
 
 
-
 class HomePageTest(TestCase):
     maxDiff = None
 
@@ -113,8 +112,7 @@ class ListViewTest(TestCase):
         self.assertContains(response, expected_error)
         self.assertTemplateUsed(response, 'list.html')
         self.assertEqual(Item.objects.all().count(), 1)
-        expected_error = escape(DUPLICATE_ITEM_ERROR)
-        
+
 
 class NewListTest(TestCase):
 
