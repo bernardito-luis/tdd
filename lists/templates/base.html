@@ -11,7 +11,7 @@
             <div class="navbar">
                 {% if user.email %}
                     <p>Logged in as {{ user.email }}</p>
-                    <p><a href="{% url 'logout' %}">Sign out</a></p>
+                    <p><a id='logout' href="{% url 'logout' %}">Sign out</a></p>
                 {% else %}
                     <a href="#" id="login">Sign in</a>
                 {% endif %}
@@ -61,6 +61,8 @@
                     loggedInUser: currentUser,
                     onlogin: function(assertion) {
                         $.post('/accounts/login', {assertion: assertion, csrfmiddlewaretoken: csrf_token})
+                        .done(function () { window.location.reload(); })
+                        .fail(function () { navigator.id.logout(); })
                     },
                     onlogout: function() {
                         $.post('/accounts/logout')
