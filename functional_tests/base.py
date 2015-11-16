@@ -1,11 +1,13 @@
-import sys
-import os
 from datetime import datetime
+import os
+import sys
+import time
 
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from .server_tools import reset_database
@@ -73,11 +75,12 @@ class FunctionalTest(StaticLiveServerTestCase):
     def dump_html(self):
         filename = self._get_filename() + '.html'
         print('dumping page HTML to', filename)
+        print(type(filename))
         with open(filename, 'w') as f:
             f.write(self.browser.page_source)
 
     def _get_filename(self):
-        timestamp = datetime.now().isoformat().replace('T', '_')[:19]
+        timestamp = datetime.now().isoformat().replace(':', '_')[:19]
         return (
             '{folder}/{classname}.{method}-window{windowid}-'
             '{timestamp}'.format(
@@ -96,6 +99,16 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def get_item_input_box(self):
         return self.browser.find_element_by_id('id_text')
+
+    def wait_for(self, function_with_assertion, timeout=DEFAULT_WAIT):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            try:
+                return function_with_assertion()
+            except (AssertionError, WebDriverException):
+                time.sleep(0.1)
+        # one more try, which will raise any errors if they are outstanding
+        return function_with_assertion()
 
     def wait_for_element_with_id(self, element_id):
         WebDriverWait(self.browser, timeout=30).until(
